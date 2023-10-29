@@ -1,103 +1,157 @@
-Project: AirBnB clone - MySQL
+Project: AirBnB clone - RESTful API
 
 Team/Group/Collaboration Project
 
-Date: 14/09/2023
+Date: 25/10/2023
 
 Authors:
 
 1. Samuel Atiemo
 2. Mahmoud Khairi
+3. hossam ghieth
 
 Project Tasks:
+0. Restart from scratch!
+mandatory
+No no no! We are already too far in the project to restart everything.
 
-0. Fork me if you can!
+But once again, let’s work on a new codebase.
+
+1. Never fail!
 mandatory
 
-1. Bug free!
+
+Since the beginning we’ve been using the unittest module, but do you know why unittests are so important? Because when you add a new feature, you refactor a piece of code, etc… you want to be sure you didn’t break anything.
+
+2. Improve storage
 mandatory
-Do you remember the unittest module?
+Update DBStorage and FileStorage, adding two new methods. All changes should be done in the branch storage_get_count:
 
-This codebase contains many test cases. Some are missing, but the ones included cover the basic functionality of the program.
+A method to retrieve one object:
 
-2. Console improvements
+Prototype: def get(self, cls, id):
+cls: class
+id: string representing the object ID
+Returns the object based on the class and its ID, or None if not found
+
+3. Status of your API
 mandatory
-Update the def do_create(self, arg): function of your command interpreter (console.py) to allow for object creation with given parameters:
+It’s time to start your API!
 
-Command syntax: create <Class name> <param 1> <param 2> <param 3>...
-Param syntax: <key name>=<value>
-Value syntax:
-String: "<value>" => starts with a double quote
-any double quote inside the value must be escaped with a backslash \
-all underscores _ must be replace by spaces . Example: You want to set the string My little house to the attribute name, your command line must be name="My_little_house"
-Float: <unit>.<decimal> => contains a dot .
-Integer: <number> => default case
-If any parameter doesn’t fit with these requirements or can’t be recognized correctly by your program, it must be skipped
-Don’t forget to add tests for this new feature!
+Your first endpoint (route) will be to return the status of your API:
 
-Also, this new feature will be tested here only with FileStorage engine.
-
-3. MySQL setup development
+4. Some stats?
 mandatory
-Write a script that prepares a MySQL server for the project:
+Create an endpoint that retrieves the number of each objects by type:
 
-A database hbnb_dev_db
-A new user hbnb_dev (in localhost)
-The password of hbnb_dev should be set to hbnb_dev_pwd
-hbnb_dev should have all privileges on the database hbnb_dev_db (and only this database)
-hbnb_dev should have SELECT privilege on the database performance_schema (and only this database)
-If the database hbnb_dev_db or the user hbnb_dev already exists, your script should not fail
+In api/v1/views/index.py
+Route: /api/v1/stats
+You must use the newly added count() method from storage
 
-4. MySQL setup test
+5. Not found
 mandatory
-Write a script that prepares a MySQL server for the project:
+Designers are really creative when they have to design a “404 page”, a “Not found”… 34 brilliantly designed 404 error pages
 
-A database hbnb_test_db
-A new user hbnb_test (in localhost)
-The password of hbnb_test should be set to hbnb_test_pwd
-hbnb_test should have all privileges on the database hbnb_test_db (and only this database)
-hbnb_test should have SELECT privilege on the database performance_schema (and only this database)
-If the database hbnb_test_db or the user hbnb_test already exists, your script should not fail
+Today it’s different, because you won’t use HTML and CSS, but JSON!
 
-5. Delete object
+In api/v1/app.py, create a handler for 404 errors that returns a JSON-formatted 404 status code response. The content should be: "error": "Not found"
+
+6. State
 mandatory
-Update FileStorage: (models/engine/file_storage.py)
+Create a new view for State objects that handles all default RESTFul API actions:
 
-Add a new public instance method: def delete(self, obj=None): to delete obj from __objects if it’s inside - if obj is equal to None, the method should not do anything
-Update the prototype of def all(self) to def all(self, cls=None) - that returns the list of objects of one type of class. Example below with State - it’s an optional filtering
+In the file api/v1/views/states.py
+You must use to_dict() to retrieve an object into a valid JSON
+Update api/v1/views/__init__.py to import this new file
+Retrieves the list of all State objects: GET /api/v1/states
 
-6. DBStorage - States and Cities
+Retrieves a State object: GET /api/v1/states/<state_id>
+
+7. City
 mandatory
-SQLAlchemy will be your best friend!
+Same as State, create a new view for City objects that handles all default RESTFul API actions:
 
-It’s time to change your storage engine and use SQLAlchemy
+In the file api/v1/views/cities.py
+You must use to_dict() to serialize an object into valid JSON
+Update api/v1/views/__init__.py to import this new file
+Retrieves the list of all City objects of a State: GET /api/v1/states/<state_id>/cities
 
-7. DBStorage - User
+8. Amenity
 mandatory
-Update User: (models/user.py)
+Create a new view for Amenity objects that handles all default RESTFul API actions:
 
-User inherits from BaseModel and Base (respect the order)
-Add or replace in the class User:
+In the file api/v1/views/amenities.py
+You must use to_dict() to serialize an object into valid JSON
+Update api/v1/views/__init__.py to import this new file
+Retrieves the list of all Amenity objects: GET /api/v1/amenities
 
-8. DBStorage - Place
+9. User
 mandatory
-Update Place: (models/place.py)
+Create a new view for User object that handles all default RESTFul API actions:
 
-Place inherits from BaseModel and Base (respect the order)
-Add or replace in the class Place:
+In the file api/v1/views/users.py
+You must use to_dict() to retrieve an object into a valid JSON
+Update api/v1/views/__init__.py to import this new file
+Retrieves the list of all User objects: GET /api/v1/users
 
-9. DBStorage - Review
+Retrieves a User object: GET /api/v1/users/<user_id>
+
+10. Place
 mandatory
-Update Review: (models/review.py)
+Create a new view for Place objects that handles all default RESTFul API actions:
 
-Review inherits from BaseModel and Base (respect the order)
-Add or replace in the class Review:
+In the file api/v1/views/places.py
+You must use to_dict() to retrieve an object into a valid JSON
+Update api/v1/views/__init__.py to import this new file
+Retrieves the list of all Place objects of a City: GET /api/v1/cities/<city_id>/places
 
-10. DBStorage - Amenity... and BOOM!
+If the city_id is not linked to any City object, raise a 404 error
+Retrieves a Place object. : GET /api/v1/places/<place_id>
+
+11. Reviews
 mandatory
-Update Amenity: (models/amenity.py)
+Create a new view for Review object that handles all default RESTFul API actions:
 
-Amenity inherits from BaseModel and Base (respect the order)
-Add or replace in the class Amenity:
+In the file api/v1/views/places_reviews.py
+You must use to_dict() to retrieve an object into valid JSON
+Update api/v1/views/__init__.py to import this new file
+Retrieves the list of all Review objects of a Place: GET /api/v1/places/<place_id>/reviews
+
+If the place_id is not linked to any Place object, raise a 404 error
+Retrieves a Review object. : GET /api/v1/reviews/<review_id>
+
+12. HTTP access control (CORS)
+mandatory
+A resource makes a cross-origin HTTP request when it requests a resource from a different domain, or port, than the one the first resource itself serves.
+
+13. Place - Amenity
+#advanced
+Create a new view for the link between Place objects and Amenity objects that handles all default RESTFul API actions:
+
+In the file api/v1/views/places_amenities.py
+You must use to_dict() to retrieve an object into a valid JSON
+Update api/v1/views/__init__.py to import this new file
+
+14. Security improvements!
+#advanced
+Currently, the User object is designed to store the user password in cleartext.
+
+It’s super bad!
+
+To avoid that, improve the User object:
+
+Update the method to_dict() of BaseModel to remove the password key except when it’s used by FileStorage to save data to disk. Tips: default parameters
+
+15. Search
+#advanced
+For the moment, the only way to list Place objects is via GET /api/v1/cities/<city_id>/places.
+
+Good, but not enough…
+
+Update api/v1/views/places.py to add a new endpoint: POST /api/v1/places_search that retrieves all Place objects depending of the JSON in the body of the request.
+
+
+
+
 
 
